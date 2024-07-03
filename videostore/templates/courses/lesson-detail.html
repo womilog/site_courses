@@ -1,0 +1,47 @@
+{%  extends 'layout.html' %}
+
+{% block main %}
+<div class="courses container">
+    <div class="course">
+        {% if object.image %}
+        <img src="{{ object.image.url }}" alt="{{ object.title }}">
+        {% else %}
+        <img src="/pictures/default.png" alt="{{ object.title }}">
+        {% endif %}
+
+        <h3>{{ object.title }}</h3>
+    </div>
+
+    <div class="aside">
+        <h1>Видео урок - {{ lesson.title }}</h1>
+        {% if object.is_free == True or user.profile.account_type == 'full' %}
+        <p>{{ lesson.desc }}</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ lesson.video }}/" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        {% else %}
+        <p>Необходимо оформить <a href="{% url 'tarrifs'%}">подписку</a></p>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="form-section container">
+    {% if user.is_authenticated %}
+    <form method="post" class="form-register">
+        {% csrf_token  %}
+        {{ form.as_p }}
+        <button class="btn btn-outline-warning" type="submit">Отправить</button>
+    </form>
+    {% else %}
+    <p>Чтобы оставлять комментарии, вам нужно <a href="{% url 'reg' %}">зарегистрироваться</a></p>
+    {% endif %}
+
+    {% for comment in comments %}
+    <div class="comment">
+      <p>{{ comment.comment }}</p>
+      <p>Автор: {{ comment.user }}</p>
+    </div>
+    {% empty %}
+    <p>Нет комментариев</p>
+    {% endfor %}
+</div>
+{% endblock %}
